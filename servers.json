@@ -1,0 +1,21 @@
+[
+    {
+        "server_name": "5555555",
+        "server_ip": "2",
+        "domain": "https://mahansarmayeh.com/",
+        "port": "1",
+        "access_level": "Level1",
+        "location": "1",
+        "section": "\u0645\u0627\u0647\u0627\u06461",
+        "credentials": {
+            "ip": {
+                "username": "5",
+                "password": "gAAAAABoq_FJpOpE2aVOseykpg5Q1OMQSzwhBFYMM8gldq4pakrGc9QgXVQhacMjouYckY9BoE4pKxSIS4wC3JtYu7liSwDHJQ=="
+            },
+            "domain": {
+                "username": "5",
+                "password": "gAAAAABoq_FJypGZxH12QO0HZOdZWNwP0XI0RgNMPDEEVwk5H0uFPpLr8-LpotnU7TTqUX0_Mo2QJY-KFJ9T2JLJkedoeLmUcw=="
+            }
+        }
+    }
+]
