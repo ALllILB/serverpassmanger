@@ -98,7 +98,7 @@
                                 <tbody>
                                 {% for server in server_list %}
                                 <tr>
-                                    <td><strong>{{ server.server_name }}</strong><br><small class="text-muted">{{ server.server_ip }}</small></td>
+                                    <td><strong>{{ server.server_name or 'No Name' }}</strong><br><small class="text-muted">{{ server.server_ip or 'No IP' }}</small></td>
                                     <td class="credentials-cell">
                                         {% if server.ip_username or server.ip_password %}
                                         <div class="credential-group">

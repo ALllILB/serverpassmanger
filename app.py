@@ -133,14 +133,32 @@ def index():
     user_role = session.get('role')
     user_access_levels = session.get('access_levels', [])
     
-    servers_raw = []
-    if user_role == 'admin':
-        servers_raw = db.execute("SELECT * FROM servers ORDER BY section, server_name").fetchall()
-    elif user_access_levels:
-        placeholders = ','.join('?' for _ in user_access_levels)
-        query = f"SELECT * FROM servers WHERE access_level IN ({placeholders}) ORDER BY section, server_name"
-        servers_raw = db.execute(query, user_access_levels).fetchall()
+    # Get search query
+    search_query = request.args.get('search', '').strip()
+    
+    # Build query with search functionality
+    base_query = "SELECT * FROM servers"
+    conditions = []
+    params = []
 
+    # Add search filter
+    if search_query:
+        conditions.append("(server_name LIKE ? OR server_ip LIKE ?)")
+        params.extend([f'%{search_query}%', f'%{search_query}%'])
+
+    # Add access level filter
+    if user_role != 'admin' and user_access_levels:
+        placeholders = ','.join('?' for _ in user_access_levels)
+        conditions.append(f"access_level IN ({placeholders})")
+        params.extend(user_access_levels)
+
+    # Build final query
+    if conditions:
+        base_query += " WHERE " + " AND ".join(conditions)
+    
+    base_query += " ORDER BY section, server_name"
+    
+    servers_raw = db.execute(base_query, params).fetchall()
     sections_raw = db.execute("SELECT name FROM sections ORDER BY name ASC").fetchall()
     
     servers_by_section = defaultdict(list)
@@ -168,7 +186,8 @@ def index():
         'index.html', 
         servers_by_section=sorted_servers_by_section, 
         sections=[s['name'] for s in sections_raw], 
-        user_role=user_role
+        user_role=user_role,
+        search_query=search_query
     )
 
 @app.route('/login', methods=['GET', 'POST'])
