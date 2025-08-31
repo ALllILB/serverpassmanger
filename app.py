@@ -288,18 +288,32 @@ def add_server():
 @admin_required
 def edit_server(server_id):
     db = get_db()
+    
+    # Get all form data
     server_name = request.form.get('server_name')
+    server_ip = request.form.get('server_ip')
+    domain = request.form.get('domain')
+    port = request.form.get('port')
+    section = request.form.get('section')
+    access_level = request.form.get('access_level')
     ip_username = request.form.get('ip_username')
     new_ip_password = request.form.get('ip_password')
     domain_username = request.form.get('domain_username')
     new_domain_password = request.form.get('domain_password')
 
+    # Build updates dictionary
     updates = {
         'server_name': server_name,
+        'server_ip': server_ip,
+        'domain': domain,
+        'port': port,
+        'section': section,
+        'access_level': access_level,
         'ip_username': ip_username,
         'domain_username': domain_username
     }
     
+    # Only update passwords if new ones are provided
     if new_ip_password:
         updates['ip_password_encrypted'] = encrypt_password(new_ip_password)
     
