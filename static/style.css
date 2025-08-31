@@ -50,24 +50,6 @@ body {
     border-color: var(--primary-hover);
 }
 
-.table {
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.table thead th {
-    background-color: var(--dark-color);
-    color: white;
-    border: none;
-}
-
-.table-hover tbody tr:hover {
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0,0,0,.1);
-    transform: scale(1.01);
-    z-index: 10;
-}
-
 .form-control:focus, .form-select:focus {
     box-shadow: 0 0 0 .25rem rgba(74, 144, 226, 0.25);
     border-color: var(--primary-color);
@@ -90,11 +72,6 @@ body {
 }
 .icon-button:hover {
     color: var(--primary-color);
-}
-
-.credentials-cell {
-    min-width: 320px;
-    font-size: 0.9rem;
 }
 
 .credential-group {
@@ -125,4 +102,55 @@ body {
     font-family: monospace;
     direction: ltr;
     text-align: left;
+}
+
+/* --- استایل‌های جدید برای نمایش آکاردئون --- */
+
+/* استایل برای هدر هر بخش (Section) */
+.section-header {
+    padding: 10px 15px;
+    background-color: #f7f7f7;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: #555;
+}
+
+.section-header:first-of-type {
+    margin-top: 0;
+    border-top: none;
+}
+
+/* استایل برای نام سرور در هدر آکاردئون */
+.accordion-button .server-name-header {
+    font-weight: 600;
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 .25rem rgba(74, 144, 226, 0.25);
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--primary-color);
+    background-color: #eef2f7;
+}
+
+/* حذف حاشیه گرد آیتم‌های آکاردئون برای هماهنگی با card */
+.accordion-item:first-of-type .accordion-button {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.accordion-item:last-of-type .accordion-button.collapsed {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.accordion-item:last-of-type {
+     border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* فاصله بین دکمه های اکشن */
+.accordion-body .btn {
+    margin-bottom: 5px;
 }
