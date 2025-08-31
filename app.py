@@ -376,72 +376,7 @@ def delete_section(section_id):
         
     return redirect(url_for('manage_sections'))
   
-@app.route('/')
-def index():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    
-    db = get_db()
-    user_role = session.get('role')
-    user_access_levels = session.get('access_levels', [])
-    
-    # --- بخش جدید: دریافت عبارت جستجو ---
-    search_query = request.args.get('search', '').strip()
-    
-    base_query = "SELECT * FROM servers"
-    conditions = []
-    params = []
 
-    # --- شرط فیلتر بر اساس جستجو ---
-    if search_query:
-        conditions.append("(server_name LIKE ? OR server_ip LIKE ?)")
-        params.extend([f'%{search_query}%', f'%{search_query}%'])
-
-    # --- شرط فیلتر بر اساس سطح دسترسی کاربر ---
-    if user_role != 'admin' and user_access_levels:
-        placeholders = ','.join('?' for _ in user_access_levels)
-        conditions.append(f"access_level IN ({placeholders})")
-        params.extend(user_access_levels)
-
-    # --- ساخت کوئری نهایی ---
-    if conditions:
-        base_query += " WHERE " + " AND ".join(conditions)
-    
-    base_query += " ORDER BY section, server_name"
-    
-    servers_raw = db.execute(base_query, params).fetchall()
-
-    sections_raw = db.execute("SELECT name FROM sections ORDER BY name ASC").fetchall()
-    
-    servers_by_section = defaultdict(list)
-    for item in servers_raw:
-        decrypted_item = dict(item)
-        decrypted_item['ip_password'] = decrypt_password(item['ip_password_encrypted'])
-        decrypted_item['domain_password'] = decrypt_password(item['domain_password_encrypted'])
-        section_name = decrypted_item['section'] or 'Uncategorized'
-        servers_by_section[section_name].append(decrypted_item)
-
-    official_sections = [s['name'] for s in sections_raw]
-    all_sections_with_servers = sorted(servers_by_section.keys())
-    
-    final_order = []
-    for sec in official_sections:
-        if sec in servers_by_section:
-            final_order.append(sec)
-    for sec in all_sections_with_servers:
-        if sec not in final_order:
-            final_order.append(sec)
-            
-    sorted_servers_by_section = {sec: servers_by_section[sec] for sec in final_order}
-
-    return render_template(
-        'index.html', 
-        servers_by_section=sorted_servers_by_section, 
-        sections=[s['name'] for s in sections_raw], 
-        user_role=user_role,
-        search_query=search_query  # <-- ارسال عبارت جستجو به قالب
-    )
-# ===============================================
 
 @app.route('/export/excel/servers')
 @admin_required

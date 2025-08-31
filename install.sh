@@ -21,7 +21,7 @@ python3 -m venv venv
 source venv/bin/activate
 
 # Install Python dependencies
-pip install Flask==3.1.2 cryptography==41.0.7 pandas==2.1.4 openpyxl==3.1.2 Werkzeug==3.1.3
+pip install Flask==3.1.2 cryptography==41.0.7 pandas==2.1.4 openpyxl==3.1.2 Werkzeug==3.1.3 python-dotenv==1.0.0
 
 # Generate keys
 SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
