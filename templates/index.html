@@ -52,8 +52,8 @@
                                 <input type="text" class="form-control" name="server_name" required>
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label">Server IP</label>
-                                <input type="text" class="form-control" name="server_ip">
+                                <label class="form-label">Server Local</label>
+                                <input type="text" class="form-control" name="local_ip">
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Domain</label>
@@ -85,12 +85,12 @@
                         <h6 class="text-muted mb-3">Credentials</h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">IP Username</label>
-                                <input type="text" class="form-control" name="ip_username">
+                                <label class="form-label">Local Username</label>
+                                <input type="text" class="form-control" name="local_username">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">IP Password</label>
-                                <input type="password" class="form-control" name="ip_password">
+                                <label class="form-label">Local Password</label>
+                                <input type="password" class="form-control" name="local_password">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Domain Username</label>
@@ -118,7 +118,7 @@
         <div class="card mb-4">
             <div class="card-body">
                 <form method="GET" action="{{ url_for('index') }}" class="d-flex">
-                    <input type="text" class="form-control me-2" name="search" placeholder="Filter by Server Name or IP..." value="{{ search_query }}">
+                    <input type="text" class="form-control me-2" name="search" placeholder="Filter by Server Name or Local..." value="{{ search_query }}">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-funnel-fill"></i></button>
                 </form>
             </div>
@@ -145,8 +145,8 @@
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ server.id }}" aria-expanded="false" aria-controls="collapse-{{ server.id }}">
                                         <span class="server-name-header">{{ server.server_name or 'No Name' }}</span>
                                         <span class="ms-auto me-3 text-muted small">
-                                            {% if server.server_ip %}
-                                                <i class="bi bi-pc-display-horizontal me-1"></i> {{ server.server_ip }}
+                                            {% if server.local_ip %}
+                                                <i class="bi bi-pc-display-horizontal me-1"></i> {{ server.local_ip }}
                                             {% elif server.domain %}
                                                 <i class="bi bi-globe me-1"></i> {{ server.domain }}
                                             {% endif %}
@@ -159,7 +159,7 @@
                                             <div class="col-md-5 mb-3">
                                                 <strong><i class="bi bi-info-circle-fill me-1"></i> Details</strong>
                                                 <hr class="my-2">
-                                                <p class="mb-1"><strong>IP:</strong> {{ server.server_ip or 'N/A' }}</p>
+                                                <p class="mb-1"><strong>Local IP:</strong> {{ server.local_ip or 'N/A' }}</p>
                                                 <p class="mb-1"><strong>Domain:</strong> {{ server.domain or 'N/A' }}</p>
                                                 <p class="mb-1"><strong>Port:</strong> <span class="badge bg-primary">{{ server.port }}</span></p>
                                                 <p class="mb-0"><strong>Access:</strong> <span class="badge bg-info">{{ server.access_level }}</span></p>
@@ -168,11 +168,11 @@
                                             <div class="col-md-5 mb-3">
                                                 <strong><i class="bi bi-key-fill me-1"></i> Credentials</strong>
                                                 <hr class="my-2">
-                                                {% if server.ip_username %}
+                                                {% if server.local_username %}
                                                 <div class="d-flex align-items-center mb-2">
-                                                    <span class="me-2 text-muted small">IP Login:</span>
-                                                    <code class="me-auto">{{ server.ip_username }}</code>
-                                                    <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('{{ server.ip_username }}')" title="Copy Username"><i class="bi bi-clipboard"></i></button>
+                                                    <span class="me-2 text-muted small">Local Login:</span>
+                                                    <code class="me-auto">{{ server.local_username }}</code>
+                                                    <button class="btn btn-sm btn-outline-secondary" onclick="copyToClipboard('{{ server.local_username }}')" title="Copy Username"><i class="bi bi-clipboard"></i></button>
                                                 </div>
                                                 {% endif %}
                                                 {% if server.domain_username %}
@@ -192,12 +192,12 @@
                                                         data-bs-toggle="modal" data-bs-target="#editServerModal" 
                                                         data-id="{{ server.id }}" 
                                                         data-name="{{ server.server_name }}" 
-                                                        data-ip="{{ server.server_ip }}" 
+                                                        data-local-ip="{{ server.local_ip }}" 
                                                         data-domain="{{ server.domain }}" 
                                                         data-port="{{ server.port }}" 
                                                         data-section="{{ server.section }}" 
                                                         data-access-level="{{ server.access_level }}" 
-                                                        data-ip-user="{{ server.ip_username }}" 
+                                                        data-local-user="{{ server.local_username }}" 
                                                         data-domain-user="{{ server.domain_username }}">
                                                         <i class="bi bi-pencil-square"></i>
                                                     </button>
@@ -239,8 +239,8 @@
                                 <input type="text" class="form-control" name="server_name" id="edit_server_name" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Server IP</label>
-                                <input type="text" class="form-control" name="server_ip" id="edit_server_ip">
+                                <label class="form-label">Server Local</label>
+                                <input type="text" class="form-control" name="local_ip" id="edit_local_ip">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Domain</label>
@@ -271,12 +271,12 @@
                         <h6>Credentials</h6>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">IP Username</label>
-                                <input type="text" class="form-control" name="ip_username" id="edit_ip_username">
+                                <label class="form-label">Local Username</label>
+                                <input type="text" class="form-control" name="local_username" id="edit_local_username">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">IP Password</label>
-                                <input type="password" class="form-control" name="ip_password" id="edit_ip_password" placeholder="Leave blank to keep current">
+                                <label class="form-label">Local Password</label>
+                                <input type="password" class="form-control" name="local_password" id="edit_local_password" placeholder="Leave blank to keep current">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Domain Username</label>
@@ -302,10 +302,9 @@
         async function copyToClipboard(text) {
             try {
                 await navigator.clipboard.writeText(text);
-                // Show a brief success message
                 const toast = document.createElement('div');
                 toast.className = 'position-fixed top-0 end-0 p-3';
-                toast.style.zIndex = 1100; // Ensure toast is on top
+                toast.style.zIndex = 1100;
                 toast.innerHTML = `<div class="toast show align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true"><div class="d-flex"><div class="toast-body">Copied to clipboard!</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div></div>`;
                 document.body.appendChild(toast);
                 setTimeout(() => document.body.removeChild(toast), 2500);
@@ -314,37 +313,33 @@
             }
         }
 
-        // Edit Server Modal functionality
         const editServerModal = document.getElementById('editServerModal');
         if (editServerModal) {
             editServerModal.addEventListener('show.bs.modal', function (event) {
                 const button = event.relatedTarget;
                 const serverId = button.getAttribute('data-id');
                 const serverName = button.getAttribute('data-name');
-                const serverIp = button.getAttribute('data-ip');
+                const localIp = button.getAttribute('data-local-ip');
                 const domain = button.getAttribute('data-domain');
                 const port = button.getAttribute('data-port');
                 const section = button.getAttribute('data-section');
                 const accessLevel = button.getAttribute('data-access-level');
-                const ipUser = button.getAttribute('data-ip-user');
+                const localUser = button.getAttribute('data-local-user');
                 const domainUser = button.getAttribute('data-domain-user');
 
-                // Update form action
                 const form = document.getElementById('editServerForm');
                 form.action = `/server/edit/${serverId}`;
 
-                // Populate form fields
                 document.getElementById('edit_server_name').value = serverName || '';
-                document.getElementById('edit_server_ip').value = serverIp || '';
+                document.getElementById('edit_local_ip').value = localIp || '';
                 document.getElementById('edit_domain').value = domain || '';
                 document.getElementById('edit_port').value = port || '';
                 document.getElementById('edit_section').value = section || '';
                 document.getElementById('edit_access_level').value = accessLevel || 'Level1';
-                document.getElementById('edit_ip_username').value = ipUser || '';
+                document.getElementById('edit_local_username').value = localUser || '';
                 document.getElementById('edit_domain_username').value = domainUser || '';
                 
-                // Clear password fields
-                document.getElementById('edit_ip_password').value = '';
+                document.getElementById('edit_local_password').value = '';
                 document.getElementById('edit_domain_password').value = '';
             });
         }
