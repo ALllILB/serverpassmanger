@@ -161,6 +161,11 @@ def index():
     servers_raw = db.execute(base_query, params).fetchall()
     sections_raw = db.execute("SELECT name FROM sections ORDER BY name ASC").fetchall()
     
+    # Debug: Check what we got
+    print(f"Found {len(servers_raw)} servers")
+    if servers_raw:
+        print(f"First server columns: {list(servers_raw[0].keys())}")
+    
     servers_by_section = defaultdict(list)
     for item in servers_raw:
         decrypted_item = dict(item)
@@ -196,6 +201,10 @@ def index():
             
     sorted_servers_by_section = {sec: servers_by_section[sec] for sec in final_order}
 
+    print(f"Passing {len(sorted_servers_by_section)} sections to template")
+    for section, servers in sorted_servers_by_section.items():
+        print(f"Section '{section}': {len(servers)} servers")
+    
     return render_template(
         'index.html', 
         servers_by_section=sorted_servers_by_section, 
