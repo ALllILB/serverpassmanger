@@ -1,450 +1,446 @@
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Management</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            font-family: 'Vazirmatn', sans-serif;
-        }
-        .table-responsive-accordion .accordion-button.collapsed::after {
-            content: "+";
-            background-image: none;
-            transform: none;
-            font-size: 1.5rem;
-            line-height: 1;
-        }
-        .table-responsive-accordion .accordion-button:not(.collapsed)::after {
-            content: "-";
-            background-image: none;
-            transform: none;
-            font-size: 1.5rem;
-            line-height: 1;
-        }
-        .table-responsive-accordion .accordion-button,
-        .table-responsive-accordion .accordion-item {
-            border: none;
-            background-color: transparent;
-        }
-        .table-responsive-accordion .accordion-body {
-            padding: 0;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+        .table-responsive-accordion .accordion-button.collapsed::after {
+            content: "+";
+            background-image: none;
+            transform: none;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .table-responsive-accordion .accordion-button:not(.collapsed)::after {
+            content: "-";
+            background-image: none;
+            transform: none;
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .table-responsive-accordion .accordion-button,
+        .table-responsive-accordion .accordion-item {
+            border: none;
+            background-color: transparent;
+        }
+        .table-responsive-accordion .accordion-body {
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/"><i class="bi bi-hdd-stack-fill me-2"></i>Server Manager</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    {% if user_role == 'admin' %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_management') }}">User Management</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_sections') }}">Section Management</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('export_servers_to_excel') }}"><i class="bi bi-file-earmark-excel"></i> Excel Export</a></li>
-                    {% endif %}
-                </ul>
-                <span class="navbar-text text-white me-3">Welcome, {{ session.username }}!</span>
-                <a href="{{ url_for('logout') }}" class="btn btn-outline-light"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
-            </div>
-        </div>
-    </nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="bi bi-hdd-stack-fill ms-2"></i>Server Manager</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user_role == 'admin' %}
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('user_management') }}">User Management</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_sections') }}">Section Management</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('export_servers_to_excel') }}"><i class="bi bi-file-earmark-excel"></i> Excel Export</a></li>
+                    {% endif %}
+                </ul>
+                <span class="navbar-text text-white ms-3">Welcome, {{ session.username }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-light"><i class="bi bi-box-arrow-right ms-2"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
 
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
 
-        <div class="card mb-4">
-            <div id="addServerCollapse" class="collapse">
-                <div class="card-header">
-                    <h5 class="mb-0">Add New Server</h5>
-                </div>
-                <div class="card-body">
-                    <form action="{{ url_for('add_server') }}" method="POST">
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-4">
-                                <label class="form-label">Server Name *</label>
-                                <input type="text" class="form-control" name="server_name" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Server Local</label>
-                                <input type="text" class="form-control" name="local_ip">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Domain</label>
-                                <input type="text" class="form-control" name="domain">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Port *</label>
-                                <input type="text" class="form-control" name="port" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Access Level *</label>
-                                <select name="access_level" class="form-select" required>
-                                    <option value="" disabled selected>Select Access Level</option>
-                                    <option value="Level1">Level 1</option>
-                                    <option value="Level2">Level 2</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label">Section</label>
-                                <select name="section" class="form-select">
-                                    <option value="" selected>Select Section</option>
-                                    {% for section in sections %}
-                                    <option value="{{ section }}">{{ section }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <hr>
-                        <h6 class="text-muted mb-3">Credentials</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Local Username</label>
-                                <input type="text" class="form-control" name="local_username">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Local Password</label>
-                                <input type="password" class="form-control" name="local_password">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Domain Username</label>
-                                <input type="text" class="form-control" name="domain_username">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Domain Password</label>
-                                <input type="password" class="form-control" name="domain_password">
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-success me-2">
-                                <i class="bi bi-plus-lg me-2"></i>Add Server
-                            </button>
-                            <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addServerCollapse">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="GET" action="{{ url_for('index') }}" class="d-flex">
-                    <input type="text" class="form-control me-2" name="search" placeholder="Filter by Server Name or Local..." value="{{ search_query }}">
-                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel-fill"></i></button>
-                </form>
-            </div>
-        </div>
+        <div class="card mb-4">
+            <div id="addServerCollapse" class="collapse">
+                <div class="card-header">
+                    <h5 class="mb-0">Add New Server</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('add_server') }}" method="POST">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Server Name *</label>
+                                <input type="text" class="form-control" name="server_name" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Server Local</label>
+                                <input type="text" class="form-control" name="local_ip">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Domain</label>
+                                <input type="text" class="form-control" name="domain">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Port *</label>
+                                <input type="text" class="form-control" name="port" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Access Level *</label>
+                                <select name="access_level" class="form-select" required>
+                                    <option value="" disabled selected>Select Access Level</option>
+                                    <option value="Level1">Level 1</option>
+                                    <option value="Level2">Level 2</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Section</label>
+                                <select name="section" class="form-select">
+                                    <option value="" selected>Select Section</option>
+                                    {% for section in sections %}
+                                    <option value="{{ section }}">{{ section }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6 class="text-muted mb-3">Credentials</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Local Username</label>
+                                <input type="text" class="form-control" name="local_username">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Local Password</label>
+                                <input type="password" class="form-control" name="local_password">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain Username</label>
+                                <input type="text" class="form-control" name="domain_username">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain Password</label>
+                                <input type="password" class="form-control" name="domain_password">
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-success ms-2">
+                                <i class="bi bi-plus-lg ms-2"></i>Add Server
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#addServerCollapse">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('index') }}" class="d-flex">
+                    <input type="text" class="form-control ms-2" name="search" placeholder="Filter by Server Name or Local..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-funnel-fill"></i></button>
+                </form>
+            </div>
+        </div>
 
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Server Management</h5>
-                {% if user_role == 'admin' %}
-                <button class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#addServerCollapse">
-                    <i class="bi bi-plus-lg me-2"></i>Add New Server
-                </button>
-                {% endif %}
-            </div>
-            <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="bg-light">
-                        <tr>
-                            <th>Server Name</th>
-                            <th>IP / Domain</th>
-                            <th>Credentials</th>
-                            <th>Port</th>
-                            <th>Section</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for section, server_list in servers_by_section.items() %}
-                            <tr>
-                                <td colspan="6" class="table-secondary fw-bold">{{ section }}</td>
-                            </tr>
-                            {% for server in server_list %}
-                            <tr>
-                                <td>{{ server.server_name or 'N/A' }}</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#ipDomainCollapse{{ server.id }}" aria-expanded="false" aria-controls="ipDomainCollapse{{ server.id }}">
-                                        Show Details
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-info"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#credentialsModal"
-                                            data-local-user="{{ server.local_username }}"
-                                            data-local-pass="{{ server.local_password }}"
-                                            data-domain-user="{{ server.domain_username }}"
-                                            data-domain-pass="{{ server.domain_password }}">
-                                        <i class="bi bi-key me-1"></i>Show
-                                    </button>
-                                </td>
-                                <td>{{ server.port or 'N/A' }}</td>
-                                <td>{{ server.section or 'N/A' }}</td>
-                                <td>
-                                    {% if user_role == 'admin' %}
-                                    <div class="d-flex">
-                                        <button type="button" class="btn btn-primary btn-sm me-1" title="Edit Server"
-                                                data-bs-toggle="modal" data-bs-target="#editServerModal"
-                                                data-id="{{ server.id }}"
-                                                data-name="{{ server.server_name }}"
-                                                data-local-ip="{{ server.local_ip }}"
-                                                data-domain="{{ server.domain }}"
-                                                data-port="{{ server.port }}"
-                                                data-section="{{ server.section }}"
-                                                data-access-level="{{ server.access_level }}"
-                                                data-local-user="{{ server.local_username }}"
-                                                data-domain-user="{{ server.domain_username }}">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </button>
-                                        <form action="{{ url_for('delete_server', server_id=server.id) }}" method="POST"
-                                              onsubmit="return confirm('Are you sure you want to delete this server?');"
-                                              style="display: inline;">
-                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete Server">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            <tr class="collapse" id="ipDomainCollapse{{ server.id }}">
-                                <td colspan="6" class="p-0">
-                                    <div class="bg-light p-3">
-                                        <strong>IP:</strong> {{ server.local_ip or 'N/A' }}<br>
-                                        <strong>Domain:</strong> {{ server.domain or 'N/A' }}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center text-muted p-4">No servers found matching your criteria.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal fade" id="editServerModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Server</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <form id="editServerForm" method="POST">
-                    <div class="modal-body">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Server Name</label>
-                                <input type="text" class="form-control" name="server_name" id="edit_server_name" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Server Local</label>
-                                <input type="text" class="form-control" name="local_ip" id="edit_local_ip">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Domain</label>
-                                <input type="text" class="form-control" name="domain" id="edit_domain">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Port</label>
-                                <input type="text" class="form-control" name="port" id="edit_port" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Section</label>
-                                <select name="section" class="form-select" id="edit_section">
-                                    <option value="">Select Section</option>
-                                    {% for section in sections %}
-                                    <option value="{{ section }}">{{ section }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Access Level</label>
-                                <select name="access_level" class="form-select" id="edit_access_level" required>
-                                    <option value="Level1">Level 1</option>
-                                    <option value="Level2">Level 2</option>
-                                </select>
-                            </div>
-                        </div>
-                        <hr>
-                        <h6>Credentials</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Local Username</label>
-                                <input type="text" class="form-control" name="local_username" id="edit_local_username">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Local Password</label>
-                                <input type="password" class="form-control" name="local_password" id="edit_local_password" placeholder="Leave blank to keep current">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Domain Username</label>
-                                <input type="text" class="form-control" name="domain_username" id="edit_domain_username">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Domain Password</label>
-                                <input type="password" class="form-control" name="domain_password" id="edit_domain_password" placeholder="Leave blank to keep current">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Server Management</h5>
+                {% if user_role == 'admin' %}
+                <button class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#addServerCollapse">
+                    <i class="bi bi-plus-lg ms-2"></i>Add New Server
+                </button>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>Server Name</th>
+                            <th>IP / Domain</th>
+                            <th>Credentials</th>
+                            <th>Port</th>
+                            <th>Section</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section, server_list in servers_by_section.items() %}
+                            <tr>
+                                <td colspan="6" class="table-secondary fw-bold">{{ section }}</td>
+                            </tr>
+                            {% for server in server_list %}
+                            <tr>
+                                <td>{{ server.server_name or 'N/A' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#ipDomainCollapse{{ server.id }}" aria-expanded="false" aria-controls="ipDomainCollapse{{ server.id }}">
+                                        Show Details
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-info"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#credentialsModal"
+                                            data-local-user="{{ server.local_username }}"
+                                            data-local-pass="{{ server.local_password }}"
+                                            data-domain-user="{{ server.domain_username }}"
+                                            data-domain-pass="{{ server.domain_password }}">
+                                        <i class="bi bi-key ms-1"></i>Show
+                                    </button>
+                                </td>
+                                <td>{{ server.port or 'N/A' }}</td>
+                                <td>{{ server.section or 'N/A' }}</td>
+                                <td>
+                                    {% if user_role == 'admin' %}
+                                    <div class="d-flex">
+                                        <button type="button" class="btn btn-primary btn-sm ms-1" title="Edit Server"
+                                                data-bs-toggle="modal" data-bs-target="#editServerModal"
+                                                data-id="{{ server.id }}"
+                                                data-name="{{ server.server_name }}"
+                                                data-local-ip="{{ server.local_ip }}"
+                                                data-domain="{{ server.domain }}"
+                                                data-port="{{ server.port }}"
+                                                data-section="{{ server.section }}"
+                                                data-access-level="{{ server.access_level }}"
+                                                data-local-user="{{ server.local_username }}"
+                                                data-domain-user="{{ server.domain_username }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <form action="{{ url_for('delete_server', server_id=server.id) }}" method="POST"
+                                              onsubmit="return confirm('Are you sure you want to delete this server?');"
+                                              style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete Server">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr class="collapse" id="ipDomainCollapse{{ server.id }}">
+                                <td colspan="6" class="p-0">
+                                    <div class="bg-light p-3">
+                                        <strong>IP:</strong> {{ server.local_ip or 'N/A' }}<br>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted p-4">No servers found matching your criteria.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="editServerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Server</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editServerForm" method="POST">
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Server Name</label>
+                                <input type="text" class="form-control" name="server_name" id="edit_server_name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Server Local</label>
+                                <input type="text" class="form-control" name="local_ip" id="edit_local_ip">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain</label>
+                                <input type="text" class="form-control" name="domain" id="edit_domain">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Port</label>
+                                <input type="text" class="form-control" name="port" id="edit_port" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Section</label>
+                                <select name="section" class="form-select" id="edit_section">
+                                    <option value="">Select Section</option>
+                                    {% for section in sections %}
+                                    <option value="{{ section }}">{{ section }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Access Level</label>
+                                <select name="access_level" class="form-select" id="edit_access_level" required>
+                                    <option value="Level1">Level 1</option>
+                                    <option value="Level2">Level 2</option>
+                                </select>
+                            </div>
+                        </div>
+                        <hr>
+                        <h6>Credentials</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Local Username</label>
+                                <input type="text" class="form-control" name="local_username" id="edit_local_username">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Local Password</label>
+                                <input type="password" class="form-control" name="local_password" id="edit_local_password" placeholder="Leave blank to keep current">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain Username</label>
+                                <input type="text" class="form-control" name="domain_username" id="edit_domain_username">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Domain Password</label>
+                                <input type="password" class="form-control" name="domain_password" id="edit_domain_password" placeholder="Leave blank to keep current">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <div class="modal fade" id="credentialsModal" tabindex="-1" aria-labelledby="credentialsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="credentialsModalLabel">Server Credentials</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Local Username</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="local_username_field" readonly>
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_username_field').value)">
-                                <i class="bi bi-clipboard"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Local Password</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="local_password_field" readonly>
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_password_field').value)">
-                                <i class="bi bi-clipboard"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="mb-3">
-                        <label class="form-label">Domain Username</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="domain_username_field" readonly>
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_username_field').value)">
-                                <i class="bi bi-clipboard"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Domain Password</label>
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="domain_password_field" readonly>
-                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_password_field').value)">
-                                <i class="bi bi-clipboard"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <div class="modal fade" id="credentialsModal" tabindex="-1" aria-labelledby="credentialsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="credentialsModalLabel">Server Credentials</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Local Username</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="local_username_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_username_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Local Password</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="local_password_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_password_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">Domain Username</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="domain_username_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_username_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Domain Password</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="domain_password_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_password_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        async function copyToClipboard(text) {
-            if (!text || text === 'N/A') {
-                showToast('Nothing to copy!', 'warning');
-                return;
-            }
-            try {
-                await navigator.clipboard.writeText(text);
-                showToast('Copied to clipboard!', 'success');
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-                showToast('Failed to copy!', 'danger');
-            }
-        }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function copyToClipboard(text) {
+            if (!text || text === 'N/A') {
+                showToast('Nothing to copy!', 'warning');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Copied to clipboard!', 'success');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+                showToast('Failed to copy!', 'danger');
+            }
+        }
 
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = 'position-fixed top-0 end-0 p-3';
-            toast.style.zIndex = 1100;
-            const bgClass = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-danger';
-            toast.innerHTML = `<div class="toast show align-items-center text-white ${bgClass} border-0" role="alert"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.parentElement.remove()"></button></div></div>`;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                if (document.body.contains(toast)) {
-                    document.body.removeChild(toast);
-                }
-            }, 3000);
-        }
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed top-0 end-0 p-3';
+            toast.style.zIndex = 1100;
+            const bgClass = type === 'success' ? 'bg-success' : type === 'warning' ? 'bg-warning' : 'bg-danger';
+            toast.innerHTML = `<div class="toast show align-items-center text-white ${bgClass} border-0" role="alert"><div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.parentElement.parentElement.parentElement.remove()"></button></div></div>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                if (document.body.contains(toast)) {
+                    document.body.removeChild(toast);
+                }
+            }, 3000);
+        }
 
-        const editServerModal = document.getElementById('editServerModal');
-        if (editServerModal) {
-            editServerModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const serverId = button.getAttribute('data-id');
-                const serverName = button.getAttribute('data-name');
-                const localIp = button.getAttribute('data-local-ip');
-                const domain = button.getAttribute('data-domain');
-                const port = button.getAttribute('data-port');
-                const section = button.getAttribute('data-section');
-                const accessLevel = button.getAttribute('data-access-level');
-                const localUser = button.getAttribute('data-local-user');
-                const domainUser = button.getAttribute('data-domain-user');
+        const editServerModal = document.getElementById('editServerModal');
+        if (editServerModal) {
+            editServerModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const serverId = button.getAttribute('data-id');
+                const serverName = button.getAttribute('data-name');
+                const localIp = button.getAttribute('data-local-ip');
+                const domain = button.getAttribute('data-domain');
+                const port = button.getAttribute('data-port');
+                const section = button.getAttribute('data-section');
+                const accessLevel = button.getAttribute('data-access-level');
+                const localUser = button.getAttribute('data-local-user');
+                const domainUser = button.getAttribute('data-domain-user');
 
-                const form = document.getElementById('editServerForm');
-                form.action = `/server/edit/${serverId}`;
+                const form = document.getElementById('editServerForm');
+                form.action = `/server/edit/${serverId}`;
 
-                document.getElementById('edit_server_name').value = serverName || '';
-                document.getElementById('edit_local_ip').value = localIp || '';
-                document.getElementById('edit_domain').value = domain || '';
-                document.getElementById('edit_port').value = port || '';
-                document.getElementById('edit_section').value = section || '';
-                document.getElementById('edit_access_level').value = accessLevel || 'Level1';
-                document.getElementById('edit_local_username').value = localUser || '';
-                document.getElementById('edit_domain_username').value = domainUser || '';
-                
-                document.getElementById('edit_local_password').value = '';
-                document.getElementById('edit_domain_password').value = '';
-            });
-        }
-        
-        const credentialsModal = document.getElementById('credentialsModal');
-        if (credentialsModal) {
-            credentialsModal.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                const localUser = button.getAttribute('data-local-user');
-                const localPass = button.getAttribute('data-local-pass');
-                const domainUser = button.getAttribute('data-domain-user');
-                const domainPass = button.getAttribute('data-domain-pass');
-                
-                document.getElementById('local_username_field').value = localUser || 'N/A';
-                document.getElementById('local_password_field').value = localPass || 'N/A';
-                document.getElementById('domain_username_field').value = domainUser || 'N/A';
-                document.getElementById('domain_password_field').value = domainPass || 'N/A';
-            });
-        }
-    </script>
+                document.getElementById('edit_server_name').value = serverName || '';
+                document.getElementById('edit_local_ip').value = localIp || '';
+                document.getElementById('edit_domain').value = domain || '';
+                document.getElementById('edit_port').value = port || '';
+                document.getElementById('edit_section').value = section || '';
+                document.getElementById('edit_access_level').value = accessLevel || 'Level1';
+                document.getElementById('edit_local_username').value = localUser || '';
+                document.getElementById('edit_domain_username').value = domainUser || '';
+                
+                document.getElementById('edit_local_password').value = '';
+                document.getElementById('edit_domain_password').value = '';
+            });
+        }
+        
+        const credentialsModal = document.getElementById('credentialsModal');
+        if (credentialsModal) {
+            credentialsModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const localUser = button.getAttribute('data-local-user');
+                const localPass = button.getAttribute('data-local-pass');
+                const domainUser = button.getAttribute('data-domain-user');
+                const domainPass = button.getAttribute('data-domain-pass');
+                
+                document.getElementById('local_username_field').value = localUser || 'N/A';
+                document.getElementById('local_password_field').value = localPass || 'N/A';
+                document.getElementById('domain_username_field').value = domainUser || 'N/A';
+                document.getElementById('domain_password_field').value = domainPass || 'N/A';
+            });
+        }
+    </script>
 </body>
 </html>
