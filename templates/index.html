@@ -135,7 +135,9 @@
             </div>
             <div class="card-body p-0">
                 <div class="accordion" id="serverAccordion">
-                    {% for server in servers_raw %}
+                    {% for section, server_list in servers_by_section.items() %}
+                        <h6 class="text-muted mt-3 mb-2">{{ section }}</h6>
+                        {% for server in server_list %}
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="heading{{ server.id }}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ server.id }}" aria-expanded="false" aria-controls="collapse{{ server.id }}">
@@ -186,6 +188,7 @@
                             </div>
                         </div>
                     </div>
+                        {% endfor %}
                     {% else %}
                         <div class="text-center p-4 text-muted">No servers found matching your criteria.</div>
                     {% endfor %}
