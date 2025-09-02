@@ -269,14 +269,14 @@ def add_server():
                              local_username, local_password_encrypted, domain_username, domain_password_encrypted)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
-        request.form.get('server_name'),
-        request.form.get('local_ip'), # نام فیلد در فرم
+        request.form['server_name'],
+        request.form.get('local_ip'),
         request.form.get('domain'),
-        request.form.get('port'),
-        request.form.get('access_level'),
+        request.form['port'],
+        request.form['access_level'],
         request.form.get('section'),
-        request.form.get('local_username'), # --- تغییرات مهم ---
-        encrypt_password(request.form.get('local_password')), # --- تغییرات مهم ---
+        request.form.get('local_username'),
+        encrypt_password(request.form.get('local_password')),
         request.form.get('domain_username'),
         encrypt_password(request.form.get('domain_password'))
     ))
@@ -291,25 +291,25 @@ def edit_server(server_id):
     
     # Get all form data
     server_name = request.form.get('server_name')
-    local_ip = request.form.get('local_ip') # --- تغییرات مهم ---
+    local_ip = request.form.get('local_ip')
     domain = request.form.get('domain')
     port = request.form.get('port')
     section = request.form.get('section')
     access_level = request.form.get('access_level')
-    local_username = request.form.get('local_username') # --- تغییرات مهم ---
-    new_local_password = request.form.get('local_password') # --- تغییرات مهم ---
+    local_username = request.form.get('local_username')
+    new_local_password = request.form.get('local_password')
     domain_username = request.form.get('domain_username')
     new_domain_password = request.form.get('domain_password')
 
     # Build updates dictionary
     updates = {
         'server_name': server_name,
-        'local_ip': local_ip, # --- تغییرات مهم ---
+        'local_ip': local_ip,
         'domain': domain,
         'port': port,
         'section': section,
         'access_level': access_level,
-        'local_username': local_username, # --- تغییرات مهم ---
+        'local_username': local_username,
         'domain_username': domain_username
     }
     

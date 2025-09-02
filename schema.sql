@@ -15,13 +15,13 @@ CREATE TABLE users (
 CREATE TABLE servers (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     server_name TEXT NOT NULL,
-    server_ip TEXT,
+    local_ip TEXT,
     domain TEXT,
     port INTEGER NOT NULL,
     access_level TEXT NOT NULL,
     section TEXT,
-    ip_username TEXT,
-    ip_password_encrypted TEXT,
+    local_username TEXT,
+    local_password_encrypted TEXT,
     domain_username TEXT,
     domain_password_encrypted TEXT
 );
