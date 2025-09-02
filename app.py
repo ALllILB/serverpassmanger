@@ -166,11 +166,16 @@ def index():
         decrypted_item = dict(item)
         # Debug: print what columns exist
         print(f"Available columns: {list(item.keys())}")
-        print(f"Local password encrypted: {item.get('local_password_encrypted', 'NOT FOUND')}")
-        print(f"Domain password encrypted: {item.get('domain_password_encrypted', 'NOT FOUND')}")
         
-        decrypted_item['local_password'] = decrypt_password(item.get('local_password_encrypted'))
-        decrypted_item['domain_password'] = decrypt_password(item.get('domain_password_encrypted'))
+        # Check if columns exist before accessing
+        local_pass_encrypted = item['local_password_encrypted'] if 'local_password_encrypted' in item.keys() else None
+        domain_pass_encrypted = item['domain_password_encrypted'] if 'domain_password_encrypted' in item.keys() else None
+        
+        print(f"Local password encrypted: {local_pass_encrypted}")
+        print(f"Domain password encrypted: {domain_pass_encrypted}")
+        
+        decrypted_item['local_password'] = decrypt_password(local_pass_encrypted)
+        decrypted_item['domain_password'] = decrypt_password(domain_pass_encrypted)
         
         print(f"Decrypted local password: {decrypted_item['local_password']}")
         print(f"Decrypted domain password: {decrypted_item['domain_password']}")
