@@ -143,7 +143,7 @@ def index():
 
     # Add search filter
     if search_query:
-        conditions.append("(server_name LIKE ? OR server_ip LIKE ?)")
+        conditions.append("(server_name LIKE ? OR local_ip LIKE ?)")
         params.extend([f'%{search_query}%', f'%{search_query}%'])
 
     # Add access level filter
@@ -164,8 +164,17 @@ def index():
     servers_by_section = defaultdict(list)
     for item in servers_raw:
         decrypted_item = dict(item)
-        decrypted_item['local_password'] = decrypt_password(item['local_password_encrypted'])
-        decrypted_item['domain_password'] = decrypt_password(item['domain_password_encrypted'])
+        # Debug: print what columns exist
+        print(f"Available columns: {list(item.keys())}")
+        print(f"Local password encrypted: {item.get('local_password_encrypted', 'NOT FOUND')}")
+        print(f"Domain password encrypted: {item.get('domain_password_encrypted', 'NOT FOUND')}")
+        
+        decrypted_item['local_password'] = decrypt_password(item.get('local_password_encrypted'))
+        decrypted_item['domain_password'] = decrypt_password(item.get('domain_password_encrypted'))
+        
+        print(f"Decrypted local password: {decrypted_item['local_password']}")
+        print(f"Decrypted domain password: {decrypted_item['domain_password']}")
+        
         section_name = decrypted_item['section'] or 'Uncategorized'
         servers_by_section[section_name].append(decrypted_item)
 
