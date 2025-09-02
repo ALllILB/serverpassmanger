@@ -164,21 +164,21 @@ def index():
     servers_by_section = defaultdict(list)
     for item in servers_raw:
         decrypted_item = dict(item)
-        # Debug: print what columns exist
-        print(f"Available columns: {list(item.keys())}")
         
-        # Check if columns exist before accessing
-        local_pass_encrypted = item['local_password_encrypted'] if 'local_password_encrypted' in item.keys() else None
-        domain_pass_encrypted = item['domain_password_encrypted'] if 'domain_password_encrypted' in item.keys() else None
+        # Try both old and new column names for compatibility
+        local_pass_encrypted = None
+        domain_pass_encrypted = None
         
-        print(f"Local password encrypted: {local_pass_encrypted}")
-        print(f"Domain password encrypted: {domain_pass_encrypted}")
+        if 'local_password_encrypted' in item.keys():
+            local_pass_encrypted = item['local_password_encrypted']
+        elif 'ip_password_encrypted' in item.keys():
+            local_pass_encrypted = item['ip_password_encrypted']
+            
+        if 'domain_password_encrypted' in item.keys():
+            domain_pass_encrypted = item['domain_password_encrypted']
         
         decrypted_item['local_password'] = decrypt_password(local_pass_encrypted)
         decrypted_item['domain_password'] = decrypt_password(domain_pass_encrypted)
-        
-        print(f"Decrypted local password: {decrypted_item['local_password']}")
-        print(f"Decrypted domain password: {decrypted_item['domain_password']}")
         
         section_name = decrypted_item['section'] or 'Uncategorized'
         servers_by_section[section_name].append(decrypted_item)
