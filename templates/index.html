@@ -134,80 +134,61 @@
                 {% endif %}
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Server Name</th>
-                                <th>Local IP/Domain</th>
-                                <th>Credentials</th>
-                                <th>Port</th>
-                                <th>Section</th>
-                                {% if user_role == 'admin' %}
-                                <th>Actions</th>
-                                {% endif %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for section, server_list in servers_by_section.items() %}
-                            {% for server in server_list %}
-                            <tr>
-                                <td><strong>{{ server.server_name or 'No Name' }}</strong></td>
-                                <td>
-                                    {% if server.local_ip %}<div>Local IP: {{ server.local_ip }}</div>{% endif %}
-                                    {% if server.domain %}<div>Domain: {{ server.domain }}</div>{% endif %}
-                                </td>
-                                <td>
-                                    {% if server.local_username or server.local_password %}
-                                    <div class="mb-1">
-                                        <small class="text-muted">Local:</small><br>
-                                        <code>{{ server.local_username or 'N/A' }}</code> / <code>{{ server.local_password or 'N/A' }}</code>
-                                        <button class="btn btn-sm btn-outline-secondary ms-1" onclick="copyToClipboard('{{ server.local_username }}')"><i class="bi bi-clipboard"></i></button>
-                                    </div>
-                                    {% endif %}
-                                    {% if server.domain_username or server.domain_password %}
-                                    <div>
-                                        <small class="text-muted">Domain:</small><br>
-                                        <code>{{ server.domain_username or 'N/A' }}</code> / <code>{{ server.domain_password or 'N/A' }}</code>
-                                        <button class="btn btn-sm btn-outline-secondary ms-1" onclick="copyToClipboard('{{ server.domain_username }}')"><i class="bi bi-clipboard"></i></button>
-                                    </div>
-                                    {% endif %}
-                                </td>
-                                <td><span class="badge bg-primary">{{ server.port }}</span></td>
-                                <td><span class="badge bg-secondary">{{ server.section or 'Uncategorized' }}</span></td>
-                                {% if user_role == 'admin' %}
-                                <td>
-                                    <button type="button" class="btn btn-primary btn-sm me-1" title="Edit Server" 
-                                            data-bs-toggle="modal" data-bs-target="#editServerModal" 
-                                            data-id="{{ server.id }}" 
-                                            data-name="{{ server.server_name }}" 
-                                            data-local-ip="{{ server.local_ip }}" 
-                                            data-domain="{{ server.domain }}" 
-                                            data-port="{{ server.port }}" 
-                                            data-section="{{ server.section }}" 
-                                            data-access-level="{{ server.access_level }}" 
-                                            data-local-user="{{ server.local_username }}" 
-                                            data-domain-user="{{ server.domain_username }}">
-                                        <i class="bi bi-pencil-square"></i>
+                <div class="accordion" id="serverAccordion">
+                    {% for server in servers_raw %}
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ server.id }}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ server.id }}" aria-expanded="false" aria-controls="collapse{{ server.id }}">
+                                <strong>{{ server.server_name or 'No Name' }}</strong>
+                                <span class="ms-3 badge bg-secondary">{{ server.section or 'Uncategorized' }}</span>
+                                <span class="ms-3 badge bg-primary">{{ server.port }}</span>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ server.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ server.id }}" data-bs-parent="#serverAccordion">
+                            <div class="accordion-body">
+                                <p><strong>Local IP:</strong> {{ server.local_ip or 'N/A' }}</p>
+                                <p><strong>Domain:</strong> {{ server.domain or 'N/A' }}</p>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-info me-2" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#credentialsModal"
+                                            data-local-user="{{ server.local_username }}"
+                                            data-local-pass="{{ server.local_password }}"
+                                            data-domain-user="{{ server.domain_username }}"
+                                            data-domain-pass="{{ server.domain_password }}">
+                                        <i class="bi bi-key me-2"></i>Credentials
                                     </button>
-                                    <form action="{{ url_for('delete_server', server_id=server.id) }}" method="POST" 
-                                          onsubmit="return confirm('Are you sure you want to delete this server?');" 
-                                          style="display: inline;">
-                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete Server">
-                                            <i class="bi bi-trash"></i>
+                                    {% if user_role == 'admin' %}
+                                    <div>
+                                        <button type="button" class="btn btn-primary btn-sm me-1" title="Edit Server" 
+                                                data-bs-toggle="modal" data-bs-target="#editServerModal" 
+                                                data-id="{{ server.id }}" 
+                                                data-name="{{ server.server_name }}" 
+                                                data-local-ip="{{ server.local_ip }}" 
+                                                data-domain="{{ server.domain }}" 
+                                                data-port="{{ server.port }}" 
+                                                data-section="{{ server.section }}" 
+                                                data-access-level="{{ server.access_level }}" 
+                                                data-local-user="{{ server.local_username }}" 
+                                                data-domain-user="{{ server.domain_username }}">
+                                            <i class="bi bi-pencil-square"></i>
                                         </button>
-                                    </form>
-                                </td>
-                                {% endif %}
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center p-4 text-muted">No servers found matching your criteria.</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                                        <form action="{{ url_for('delete_server', server_id=server.id) }}" method="POST" 
+                                              onsubmit="return confirm('Are you sure you want to delete this server?');" 
+                                              style="display: inline;">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Delete Server">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                        <div class="text-center p-4 text-muted">No servers found matching your criteria.</div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -286,6 +267,56 @@
         </div>
     </div>
 
+    <div class="modal fade" id="credentialsModal" tabindex="-1" aria-labelledby="credentialsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="credentialsModalLabel">Server Credentials</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Local Username</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="local_username_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_username_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Local Password</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="local_password_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('local_password_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label">Domain Username</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="domain_username_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_username_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Domain Password</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="domain_password_field" readonly>
+                            <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard(document.getElementById('domain_password_field').value)">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         async function copyToClipboard(text) {
@@ -344,6 +375,22 @@
                 
                 document.getElementById('edit_local_password').value = '';
                 document.getElementById('edit_domain_password').value = '';
+            });
+        }
+        
+        const credentialsModal = document.getElementById('credentialsModal');
+        if (credentialsModal) {
+            credentialsModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const localUser = button.getAttribute('data-local-user');
+                const localPass = button.getAttribute('data-local-pass');
+                const domainUser = button.getAttribute('data-domain-user');
+                const domainPass = button.getAttribute('data-domain-pass');
+                
+                document.getElementById('local_username_field').value = localUser || 'N/A';
+                document.getElementById('local_password_field').value = localPass || 'N/A';
+                document.getElementById('domain_username_field').value = domainUser || 'N/A';
+                document.getElementById('domain_password_field').value = domainPass || 'N/A';
             });
         }
     </script>
