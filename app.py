@@ -164,7 +164,7 @@ def index():
     servers_by_section = defaultdict(list)
     for item in servers_raw:
         decrypted_item = dict(item)
-        decrypted_item['ip_password'] = decrypt_password(item['ip_password_encrypted'])
+        decrypted_item['local_password'] = decrypt_password(item['local_password_encrypted'])
         decrypted_item['domain_password'] = decrypt_password(item['domain_password_encrypted'])
         section_name = decrypted_item['section'] or 'Uncategorized'
         servers_by_section[section_name].append(decrypted_item)
@@ -265,18 +265,18 @@ def delete_user(user_id):
 def add_server():
     db = get_db()
     db.execute('''
-        INSERT INTO servers (server_name, server_ip, domain, port, access_level, section,
-                             ip_username, ip_password_encrypted, domain_username, domain_password_encrypted)
+        INSERT INTO servers (server_name, local_ip, domain, port, access_level, section,
+                             local_username, local_password_encrypted, domain_username, domain_password_encrypted)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
-        request.form['server_name'],
-        request.form.get('server_ip'),
+        request.form.get('server_name'),
+        request.form.get('local_ip'), # نام فیلد در فرم
         request.form.get('domain'),
-        request.form['port'],
-        request.form['access_level'],
+        request.form.get('port'),
+        request.form.get('access_level'),
         request.form.get('section'),
-        request.form.get('ip_username'),
-        encrypt_password(request.form.get('ip_password')),
+        request.form.get('local_username'), # --- تغییرات مهم ---
+        encrypt_password(request.form.get('local_password')), # --- تغییرات مهم ---
         request.form.get('domain_username'),
         encrypt_password(request.form.get('domain_password'))
     ))
@@ -291,31 +291,31 @@ def edit_server(server_id):
     
     # Get all form data
     server_name = request.form.get('server_name')
-    server_ip = request.form.get('server_ip')
+    local_ip = request.form.get('local_ip') # --- تغییرات مهم ---
     domain = request.form.get('domain')
     port = request.form.get('port')
     section = request.form.get('section')
     access_level = request.form.get('access_level')
-    ip_username = request.form.get('ip_username')
-    new_ip_password = request.form.get('ip_password')
+    local_username = request.form.get('local_username') # --- تغییرات مهم ---
+    new_local_password = request.form.get('local_password') # --- تغییرات مهم ---
     domain_username = request.form.get('domain_username')
     new_domain_password = request.form.get('domain_password')
 
     # Build updates dictionary
     updates = {
         'server_name': server_name,
-        'server_ip': server_ip,
+        'local_ip': local_ip, # --- تغییرات مهم ---
         'domain': domain,
         'port': port,
         'section': section,
         'access_level': access_level,
-        'ip_username': ip_username,
+        'local_username': local_username, # --- تغییرات مهم ---
         'domain_username': domain_username
     }
     
     # Only update passwords if new ones are provided
-    if new_ip_password:
-        updates['ip_password_encrypted'] = encrypt_password(new_ip_password)
+    if new_local_password:
+        updates['local_password_encrypted'] = encrypt_password(new_local_password)
     
     if new_domain_password:
         updates['domain_password_encrypted'] = encrypt_password(new_domain_password)
@@ -421,10 +421,10 @@ def export_servers_to_excel():
     for item in all_servers:
         decrypted_data.append({
             'Server Name': item['server_name'],
-            'IP Address': item['server_ip'],
+            'IP Address': item['local_ip'],
             'Domain': item['domain'],
-            'IP Username': item['ip_username'],
-            'IP Password': decrypt_password(item['ip_password_encrypted']),
+            'IP Username': item['local_username'],
+            'IP Password': decrypt_password(item['local_password_encrypted']),
             'Domain Username': item['domain_username'],
             'Domain Password': decrypt_password(item['domain_password_encrypted']),
             'Port': item['port'],
