@@ -64,7 +64,7 @@ def create_admin_command():
         return
 
     hashed_password = generate_password_hash(password)
-    access_levels = 'Level1,Level2' 
+    access_levels = 'Level1,Level2'  
     
     try:
         db.execute(
@@ -161,16 +161,10 @@ def index():
     servers_raw = db.execute(base_query, params).fetchall()
     sections_raw = db.execute("SELECT name FROM sections ORDER BY name ASC").fetchall()
     
-    # Debug: Check what we got
-    print(f"Found {len(servers_raw)} servers")
-    if servers_raw:
-        print(f"First server columns: {list(servers_raw[0].keys())}")
-    
     servers_by_section = defaultdict(list)
     for item in servers_raw:
         decrypted_item = dict(item)
         
-        # Try both old and new column names for compatibility
         local_pass_encrypted = None
         domain_pass_encrypted = None
         
@@ -201,10 +195,6 @@ def index():
             
     sorted_servers_by_section = {sec: servers_by_section[sec] for sec in final_order}
 
-    print(f"Passing {len(sorted_servers_by_section)} sections to template")
-    for section, servers in sorted_servers_by_section.items():
-        print(f"Section '{section}': {len(servers)} servers")
-    
     return render_template(
         'index.html', 
         servers_by_section=sorted_servers_by_section, 
@@ -264,6 +254,46 @@ def add_user():
     
     return redirect(url_for('user_management'))
 
+# ===== تابع جدید برای ویرایش کاربر =====
+@app.route('/users/edit/<int:user_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_user(user_id):
+    db = get_db()
+    
+    user_to_edit = db.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    if user_to_edit['username'] == 'admin':
+        flash('The main "admin" user cannot be edited.', 'danger')
+        return redirect(url_for('user_management'))
+
+    if request.method == 'POST':
+        new_username = request.form['username']
+        new_role = request.form['role']
+        new_access_levels = ','.join(request.form.getlist('access_levels'))
+        new_password = request.form.get('password')
+
+        if new_password:
+            hashed_password = generate_password_hash(new_password)
+            db.execute('''
+                UPDATE users SET username = ?, role = ?, access_levels = ?, password_hash = ?
+                WHERE id = ?
+            ''', (new_username, new_role, new_access_levels, hashed_password, user_id))
+        else:
+            db.execute('''
+                UPDATE users SET username = ?, role = ?, access_levels = ?
+                WHERE id = ?
+            ''', (new_username, new_role, new_access_levels, user_id))
+        
+        db.commit()
+        flash(f'User "{new_username}" updated successfully.', 'success')
+        return redirect(url_for('user_management'))
+
+    user = db.execute('SELECT id, username, role, access_levels FROM users WHERE id = ?', (user_id,)).fetchone()
+    if user is None:
+        flash('User not found.', 'danger')
+        return redirect(url_for('user_management'))
+    
+    return render_template('edit_user.html', user=user)
+
 @app.route('/users/delete/<int:user_id>', methods=['POST'])
 @admin_required
 def delete_user(user_id):
@@ -312,37 +342,23 @@ def add_server():
 def edit_server(server_id):
     db = get_db()
     
-    # Get all form data
-    server_name = request.form.get('server_name')
-    local_ip = request.form.get('local_ip')
-    domain = request.form.get('domain')
-    port = request.form.get('port')
-    section = request.form.get('section')
-    access_level = request.form.get('access_level')
-    local_username = request.form.get('local_username')
-    new_local_password = request.form.get('local_password')
-    domain_username = request.form.get('domain_username')
-    new_domain_password = request.form.get('domain_password')
-
-    # Build updates dictionary
     updates = {
-        'server_name': server_name,
-        'local_ip': local_ip,
-        'domain': domain,
-        'port': port,
-        'section': section,
-        'access_level': access_level,
-        'local_username': local_username,
-        'domain_username': domain_username
+        'server_name': request.form.get('server_name'),
+        'local_ip': request.form.get('local_ip'),
+        'domain': request.form.get('domain'),
+        'port': request.form.get('port'),
+        'section': request.form.get('section'),
+        'access_level': request.form.get('access_level'),
+        'local_username': request.form.get('local_username'),
+        'domain_username': request.form.get('domain_username')
     }
     
-    # Only update passwords if new ones are provided
-    if new_local_password:
-        updates['local_password_encrypted'] = encrypt_password(new_local_password)
+    if request.form.get('local_password'):
+        updates['local_password_encrypted'] = encrypt_password(request.form.get('local_password'))
     
-    if new_domain_password:
-        updates['domain_password_encrypted'] = encrypt_password(new_domain_password)
-        
+    if request.form.get('domain_password'):
+        updates['domain_password_encrypted'] = encrypt_password(request.form.get('domain_password'))
+            
     set_clause = ', '.join([f'{key} = ?' for key in updates.keys()])
     values = list(updates.values())
     values.append(server_id)
@@ -352,7 +368,7 @@ def edit_server(server_id):
     db.execute(query, tuple(values))
     db.commit()
     
-    flash(f"Server '{server_name}' updated successfully.", 'success')
+    flash(f"Server '{updates['server_name']}' updated successfully.", 'success')
     return redirect(url_for('index'))
 
 @app.route('/delete_server/<int:server_id>', methods=['POST'])
@@ -388,7 +404,6 @@ def add_section():
         flash('Section name cannot be empty.', 'danger')
     return redirect(url_for('manage_sections'))
 
-# ===== توابع جدید برای ویرایش و حذف بخش‌ها =====
 @app.route('/sections/edit/<int:section_id>', methods=['POST'])
 @admin_required
 def edit_section(section_id):
@@ -431,8 +446,6 @@ def delete_section(section_id):
         flash('Section not found.', 'danger')
         
     return redirect(url_for('manage_sections'))
-  
-
 
 @app.route('/export/excel/servers')
 @admin_required
