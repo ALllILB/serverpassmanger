@@ -64,14 +64,14 @@
                         <div class="col-12">
                              <label class="form-label">Access Levels</label>
                              <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="access_levels" value="Level1" id="level1">
-                                    <label class="form-check-label" for="level1">Level 1</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="access_levels" value="Level2" id="level2">
-                                    <label class="form-check-label" for="level2">Level 2</label>
-                                </div>
+                                 <div class="form-check form-check-inline">
+                                     <input class="form-check-input" type="checkbox" name="access_levels" value="Level1" id="level1">
+                                     <label class="form-check-label" for="level1">Level 1</label>
+                                 </div>
+                                 <div class="form-check form-check-inline">
+                                     <input class="form-check-input" type="checkbox" name="access_levels" value="Level2" id="level2">
+                                     <label class="form-check-label" for="level2">Level 2</label>
+                                 </div>
                              </div>
                         </div>
                     </div>
@@ -107,23 +107,3 @@
                                     {% else %}
                                         <span class="text-muted">No Access</span>
                                     {% endif %}
-                                </td>
-                                <td>
-                                    {% if user.username != 'admin' and user.username != session.username %}
-                                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                        <button type="submit" class="btn btn-danger btn-sm icon-button" title="Delete User"><i class="bi bi-trash"></i></button>
-                                    </form>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
